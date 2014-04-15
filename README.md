@@ -1,6 +1,6 @@
-# client-template
+# Yahtzee
 
-Serves as a template for client JavaScript applications.
+This is a fun dice related game called Yahtzee!
 
 It uses:
 * Jade
