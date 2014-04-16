@@ -1,110 +1,126 @@
-(function() {
+(function(){
   'use strict';
 
   $(document).ready(init);
 
-  var currUser = 0;
-  var currRoll = 2;
+  var currentUser = 0;
+  var currentRoll = 3;
+  var frozen;
+  var numDice;
 
-  function init() {
+  function init(){
     $('#add').click(add);
     $('.arrow').click(arrow);
     $('body').keydown(move);
-    $('#add-score').click(score);
+    $('#add-score').click(addScore);
+    $('#roll').click(roll);
+    $('.dice').click(freeze);
+
+    numDice = $('.dice').length;
+    frozen = $('.frozen').length;
   }
 
-  function score(event) {
-    var newscore = $('#score').val();
-    newscore++;
+  function freeze(){
+    $(this).toggleClass('frozen');
+  }
 
+  function roll(){
+    var $dice = $('.dice:not(.frozen)');
+    var count = $dice.length;
+
+    for(var i=0; i < count; i++){
+      var num = Math.floor(Math.random() * 6) + 1;
+      var dice = $dice[i];
+      $(dice).attr('src', './media/die'+num+'.png');
+    }
+  }
+
+  function addScore(event){
+    var score = $('#score').val();
+    $('.horizontal .vertical').text(score);
     event.preventDefault();
   }
 
-  function move(event) {
-    var keyCode = event.keyCode;
-    switch(keyCode) {
-    case 38:
-      currUser--;
-      break;
-    case 40:
-      currUser++;
-      break;
-    case 37:
-      currRoll--;
-      break;
-    case 39:
-      currRoll++;
+  function move(event){
+    switch(event.keyCode){
+      case 38:
+        currentUser--;
+        break;
+      case 40:
+        currentUser++;
+        break;
+      case 37:
+        currentRoll--;
+        break;
+      case 39:
+        currentRoll++;
     }
+
     paintScreen();
 
-    if(keyCode<=40 && keyCode>=37) {
+    if(event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40){
       event.preventDefault();
     }
   }
 
-  function arrow() {
-    switch(this.id) {
+  function arrow(){
+    switch(this.id){
       case 'up':
-        currUser--;
+        currentUser--;
         break;
       case 'down':
-        currUser++;
+        currentUser++;
         break;
       case 'left':
-        currRoll--;
+        currentRoll--;
         break;
       case 'right':
-        currRoll++;
+        currentRoll++;
     }
+
     paintScreen();
   }
 
-  function paintScreen() {
-    var $trs = $('#game > tbody > tr');
-    var tr = $trs[currUser];
+  function paintScreen(){
     $('.horizontal').removeClass();
+    $('.vertical').removeClass();
+
+    var $trs = $('#game > tbody > tr');
+    var tr = $trs[currentUser];
     $(tr).addClass('horizontal');
 
-    var $tds = $('#game > tbody > tr > td:nth-child('+currRoll+')');
-    $('.vertical').removeClass();
-    $tds.addClass('vertical');
+    $('#game > tbody > tr > td:nth-child('+ currentRoll +')').addClass('vertical');
   }
 
-  function add(event) {
-      var username = $('#username').val();
-      var avatar = $('#avatar').val();
-
-      createRow(username, avatar);
-
-      event.preventDefault();
+  function add(event){
+    var username = $('#username').val();
+    var avatar = $('#avatar').val();
+    createRow(username, avatar);
+    event.preventDefault();
   }
 
-  function createRow(name, avatarurl) {
+  function createRow(username, avatar){
     var $tr = $('<tr>');
     var tds = [];
-    var count;
 
-    for(var i=0; i<16; i++) {
+    for(var i = 0; i < 16; i++){
       tds.push('<td></td>');
     }
-    $tr.append(tds);
 
+    $tr.append(tds);
     $('#game > tbody').append($tr);
 
-    count = $('#game > tbody > tr').length;
-    if(count === 1) {
+    var count = $('#game > tbody > tr').length;
+    if(count === 1){
       $tr.addClass('horizontal');
     }
 
     var $img = $('<img>');
-    $img.attr('src', avatarurl);
     $img.addClass('avatar');
+    $img.attr('src', avatar);
 
     $tr.children('td:nth-child(1)').append($img);
-    $tr.children('td:nth-child(2)').text(name);
+    $tr.children('td:nth-child(2)').text(username);
     $tr.children('td:nth-child(3)').addClass('vertical');
-
-
   }
-
-}());
+})();
