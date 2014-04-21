@@ -28,10 +28,10 @@
     var $dice = $('.dice:not(.frozen)');
     var count = $dice.length;
 
-    for(var i=0; i < count; i++){
+    for(var i = 0; i < count; i++){
       var num = Math.floor(Math.random() * 6) + 1;
       var dice = $dice[i];
-      $(dice).attr('src', './media/die'+num+'.png');
+      $(dice).attr('src', './media/die' + num + '.png');
     }
   }
 
